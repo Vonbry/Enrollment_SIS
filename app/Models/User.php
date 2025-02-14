@@ -17,10 +17,15 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',
+        'address',
+        'age',
+        'phone',
     ];
 
     /**
@@ -44,5 +49,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isStudentI()
+    {
+        return $this->role === 'student';
     }
 }

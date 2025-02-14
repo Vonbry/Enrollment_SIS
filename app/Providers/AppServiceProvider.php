@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Providers;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,4 +21,10 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
+
+    public static function home()
+    {
+        return Auth::check() && Auth::user()->role === 'admin' ? '/dashboard' : '/student-dashboard';
+    }
+
 }
