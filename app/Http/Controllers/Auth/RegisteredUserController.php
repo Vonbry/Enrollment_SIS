@@ -43,7 +43,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role ?? 'student',
+            'role' => $request->input('role', 'student'),
             'address' => $request->address,
             'age' => $request->age,
             'phone' => $request->phone,
@@ -53,6 +53,10 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        if ($user->role === 'admin') {
+            return redirect()->route('admin-dashboard');
+        } else {
+            return redirect()->route('student-dashboard');
+        }
     }
 }

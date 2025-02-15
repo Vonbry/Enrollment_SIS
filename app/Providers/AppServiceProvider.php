@@ -22,9 +22,12 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    public static function home()
+    public static function redirectTo()
     {
-        return Auth::check() && Auth::user()->role === 'admin' ? '/dashboard' : '/student-dashboard';
+        if (auth()->check()) {
+            return auth()->user()->role === 'admin' ? '/admin-dashboard' : '/student-dashboard';
+        }
+        return '/';
     }
-
+    
 }

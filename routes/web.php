@@ -14,12 +14,15 @@ Route::get('/', function () {
     return view('welcome'); // Show welcome page instead of redirecting
 });
 
+Route::get('/dashboard', function () {
+    return view('dashboard'); 
+})->name('dashboard');
 
 // Admin Dashboard (Only accessible to Admins)
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/dashboard', function () {
+    Route::get('/admin-dashboard', function () {
         return view('admin.index');
-    })->name('dashboard');
+    })->name('admin-dashboard');
 
     Route::resource('students', StudentController::class); // Adds CRUD routes for students
     Route::resource('subjects', SubjectController::class); // Adds CRUD routes for subjects
