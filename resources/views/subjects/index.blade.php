@@ -4,7 +4,7 @@
         <h2>Subjects List</h2>
         
         <!-- Add Student Button (Using Blade Component) -->
-        <a href="{{ route('students.create') }}">
+        <a href="{{ route('subjects.create') }}">
             <x-primary-button>Add Subject</x-primary-button>
         </a>
 

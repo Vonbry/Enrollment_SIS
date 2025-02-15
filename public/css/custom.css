@@ -143,6 +143,48 @@ body {
     transition: background-color 0.3s;
 }
 
+/* Grade Table*/
+#gradesTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#gradesTable th {
+    background-color: #007bff;
+    color: #ffffff;
+    text-align: left;
+    padding: 12px;
+}
+
+#gradesTable td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#gradesTable td .btn {
+    display: inline-block;
+    margin-right: 3px;
+
+}
+
+#gradesTable td form {
+    display: inline;
+}
+
+/* Alternate row colors */
+#gradesTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Hover effect */
+#gradesTable tbody tr:hover {
+    background-color: #d1ecf1;
+    transition: background-color 0.3s;
+}
+
 
 /* Button Styling */
 .btn {

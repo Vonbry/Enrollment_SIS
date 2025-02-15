@@ -38,6 +38,13 @@
         <script href="{{ asset('js/custom.js') }}"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
         <script>
+            document.getElementById('semester').addEventListener('change', function() {
+                let semester = this.value;
+                document.getElementById('midterm-section').style.display = (semester === '1st') ? 'block' : 'none';
+                document.getElementById('final-section').style.display = (semester === '2nd') ? 'block' : 'none';
+            });
+        </script>
+        <script>
             $(document).ready(function() {
                 $('#studentsTable').DataTable();
             });
@@ -50,6 +57,11 @@
         <script>
             $(document).ready(function() {
                 $('#enrollmentsTable').DataTable();
+            });
+        </script>
+        <script>
+            $(document).ready(function() {
+                $('#gradesTable').DataTable();
             });
         </script>
         

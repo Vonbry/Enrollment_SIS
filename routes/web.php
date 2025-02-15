@@ -6,6 +6,9 @@ use App\Providers\AppServiceProvider;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\GradeController;
+use App\Http\Controllers\StudentDashboardController;
+
 
 Route::get('/', function () {
     return view('welcome'); // Show welcome page instead of redirecting
@@ -21,15 +24,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('students', StudentController::class); // Adds CRUD routes for students
     Route::resource('subjects', SubjectController::class); // Adds CRUD routes for subjects
     Route::resource('enrollments', EnrollmentController::class); // Adds CRUD routes for enrollments
+    Route::resource('grades', GradeController::class); // Adds CRUD routes for grades
 });
 
 
 
 // Student Dashboard (Only accessible to Students)
 Route::middleware(['auth', 'role:student'])->group(function () {
-    Route::get('/student-dashboard', function () {
-        return view('students.dashboard');
-    })->name('student-dashboard');
+    Route::get('/student-dashboard', [StudentDashboardController::class, 'index'])->name('student-dashboard');
 });
 
 Route::middleware('auth')->group(function () {

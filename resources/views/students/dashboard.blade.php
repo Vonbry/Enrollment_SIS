@@ -1,16 +1,35 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Student Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                <h3>Welcome, Student!</h3>
-                <p>This is your dashboard where you can view subjects, enrollments, and grades.</p>
-            </div>
-        </div>
-    </div>
-</x-app-layout>
+@section('content')
+<div class="container">
+   
+
+    <h2>Student Dashboard</h2>
+    <p>Welcome, {{ Auth::user()->name }}! Here are your grades:</p>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Midterm</th>
+                <th>Final</th>
+                <th>Average</th>
+                <th>Description</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($grades as $grade)
+                <tr>
+                    <td>{{ $grade->subject->name }}</td>
+                    <td>{{ $grade->midterm ?? 'N/A' }}</td>
+                    <td>{{ $grade->final ?? 'N/A' }}</td>
+                    <td>{{ $grade->average ?? 'N/A' }}</td>
+                    <td>{{ $grade->description ?? 'N/A' }}</td>
+                    <td>{{ $grade->us_grade ?? 'N/A' }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+@endsection
