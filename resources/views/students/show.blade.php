@@ -5,7 +5,7 @@
         <div class="card student-card">
             <div class="card-body">
                 <h2 class="h2 text-center text-primary">Student Details</h2>
-                <hr>
+                <br>
                 <p class="p1"><strong>Name:</strong> {{ $student->name }}</p>
                 <p class="p1"><strong>Email:</strong> {{ $student->email }}</p>
                 <p class="p1"><strong>Phone:</strong> {{ $student->phone }}</p>

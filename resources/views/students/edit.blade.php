@@ -4,7 +4,7 @@
         <h1 class="h1">Edit Student</h1>
         <form action="{{ route('students.update', $student) }}" method="POST">
             @csrf
-            @method('PUT')
+            @method('PATCH')
             <div class="mb-3">
                 <label>Name</label>
                 <input type="text" name="name" class="form-control1" value="{{ $student->name }}" required>
@@ -25,7 +25,8 @@
                 <label>Age</label>
                 <input type="number" name="age" class="form-control1" value="{{ $student->age }}" required>
             </div> <br>
-            <button type="submit" class="btn btn-success1">Update</button>
+            <x-primary-button type="submit">Update Student</x-primary-button>
+            <a href="{{ route('students.index') }}" class="btn btn-secondary">Cancel</a>
         </form>
     </div>
 @endsection

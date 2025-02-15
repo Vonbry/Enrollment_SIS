@@ -41,6 +41,11 @@
                 $('#studentsTable').DataTable();
             });
         </script>
+         <script>
+            $(document).ready(function() {
+                $('#subjectsTable').DataTable();
+            });
+        </script>
         
     </body>
 </html>

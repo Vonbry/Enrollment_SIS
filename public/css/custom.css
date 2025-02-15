@@ -59,6 +59,50 @@ body {
     transition: background-color 0.3s;
 }
 
+/* Subject Table*/
+#subjectsTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#subjectsTable th {
+    background-color: #007bff;
+    color: #ffffff;
+    text-align: left;
+    padding: 12px;
+}
+
+#subjectsTable td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#subjectsTable td .btn {
+    display: inline-block;
+    margin-right: 3px;
+
+}
+
+#subjectsTable td form {
+    display: inline;
+}
+
+/* Alternate row colors */
+#subjectsTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Hover effect */
+#subjectsTable tbody tr:hover {
+    background-color: #d1ecf1;
+    transition: background-color 0.3s;
+}
+
+
+
 /* Button Styling */
 .btn {
     border-radius: 5px;
@@ -169,6 +213,24 @@ label {
 
 /* Card Hover Effect */
 .student-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Centering and Styling the Subject Details Card */
+.subject-card {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Card Hover Effect */
+.subject-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }

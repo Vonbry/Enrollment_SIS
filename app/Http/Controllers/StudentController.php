@@ -53,6 +53,7 @@ class StudentController extends Controller
         ]);
 
         $student->update($validated);
+        
         return redirect()->route('students.index')->with('success', 'Student updated successfully.');
     }
 

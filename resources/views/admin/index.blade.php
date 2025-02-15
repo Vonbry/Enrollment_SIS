@@ -12,6 +12,12 @@
                         Manage Students
                     </x-primary-button>
                 </a>
+                <!-- Button to go to Subject Management -->
+                <a href="{{ route('subjects.index') }}">
+                    <x-primary-button class="mt-4">
+                        Manage Subjects
+                    </x-primary-button>
+                </a>
             </div>
         </div>
     </div>
