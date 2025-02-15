@@ -25,8 +25,10 @@
                 <label>Age</label>
                 <input type="number" name="age" class="form-control1" required>
             </div> <br>
-            <x-primary-button type="submit">Save Student</x-primary-button>
-            <a href="{{ route('students.index') }}" class="btn btn-secondary">Cancel</a>
+            <div class="button-group">
+                <x-primary-button type="submit">Add Students</x-primary-button>
+                <a href="{{ route('students.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
         </form>
     </div>
 @endsection

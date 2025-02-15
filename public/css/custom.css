@@ -101,6 +101,47 @@ body {
     transition: background-color 0.3s;
 }
 
+/* Enrollment Table*/
+#enrollmentsTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#enrollmentsTable th {
+    background-color: #007bff;
+    color: #ffffff;
+    text-align: left;
+    padding: 12px;
+}
+
+#enrollmentsTable td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#enrollmentsTable td .btn {
+    display: inline-block;
+    margin-right: 3px;
+
+}
+
+#enrollmentsTable td form {
+    display: inline;
+}
+
+/* Alternate row colors */
+#enrollmentsTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Hover effect */
+#enrollmentsTable tbody tr:hover {
+    background-color: #d1ecf1;
+    transition: background-color 0.3s;
+}
 
 
 /* Button Styling */
@@ -148,7 +189,6 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
 }
 
 /* Center the Heading */
@@ -156,16 +196,31 @@ body {
     font-size: 28px;
     font-weight: bold;
     color: #333;
+    text-align: center;
     margin-bottom: 20px;
 }
 
-/* Input Field Styling */
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* Input and Select Field Styling */
 .form-control1 {
+    width: 100%;
     border-radius: 5px;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ced4da;
     transition: all 0.3s ease-in-out;
+}
+
+/* Label Styling */
+.form-label {
+    font-weight: bold;
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
 }
 
 /* Input Field Focus Effect */
@@ -174,31 +229,27 @@ body {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-/* Label Styling */
-label {
-    font-weight: bold;
-    margin-bottom: 1px;
-    display: block;
-    color: #555;
-    text-align: left;
-    margin-left: 140px;
+/* Button Styling */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
 }
 
-/* Submit Button Styling */
-.btn-success1 {
-    width: 40%;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+    padding: 8px 15px;
     border-radius: 5px;
+    text-decoration: none;
     transition: all 0.3s ease-in-out;
 }
 
-.btn-success1:hover {
-    background-color: #28a745;
-    opacity: 0.9;
+.btn-secondary:hover {
+    background-color: #5a6268;
 }
+
 
 /* Centering and Styling the Student Details Card */
 .student-card {

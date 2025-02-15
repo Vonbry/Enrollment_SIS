@@ -1,11 +1,11 @@
 @extends('layouts.app')
 @section('content')
     <div class="container mt-4">
-        <h2>Subjects List</h2>
+        <h2>Enrollments List</h2>
         
         <!-- Add Student Button (Using Blade Component) -->
-        <a href="{{ route('students.create') }}">
-            <x-primary-button>Add Subject</x-primary-button>
+        <a href="{{ route('enrollments.create') }}">
+            <x-primary-button>Add Enrollment</x-primary-button>
         </a>
 
         <!-- Success Message -->
@@ -16,27 +16,29 @@
         <!-- Student Table with DataTables -->
         <div class="card mt-3">
             <div class="card-body">
-                <table id="subjectsTable" class="table table-bordered">
+                <table id="enrollmentsTable" class="table table-bordered">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Subject Code</th>
                             <th>Subject Name</th>
                             <th>Units</th>
+                            <th>School Year</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($subjects as $subject)
+                        @foreach ($enrollments as $enrollment)
                             <tr>
-                                <td>{{ $subject->id }}</td>
-                                <td>{{ $subject->code }}</td>
-                                <td>{{ $subject->name }}</td>
-                                <td>{{ $subject->units }}</td>
+                            <td>{{ $enrollment->id }}</td>
+                            <td>{{ $enrollment->student->name }}</td>
+                            <td>{{ $enrollment->subject->name }}</td>
+                            <td>{{ $enrollment->semester }}</td>
+                            <td>{{ $enrollment->school_year }}</td>
                                 <td>
-                                    <a href="{{ route('subjects.show', $subject) }}" class="btn btn-info btn-sm">View</a>
-                                    <a href="{{ route('subjects.edit', $subject) }}" class="btn btn-warning btn-sm">Edit</a>
-                                    <form action="{{ route('subjects.destroy', $subject) }}" method="POST" class="d-inline">
+                                    <a href="{{ route('enrollments.show', $enrollment) }}" class="btn btn-info btn-sm">View</a>
+                                    <a href="{{ route('enrollments.edit', $enrollment) }}" class="btn btn-warning btn-sm">Edit</a>
+                                    <form action="{{ route('enrollments.destroy', $enrollment) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
@@ -52,4 +54,3 @@
         </div>
     </div>
 @endsection
-

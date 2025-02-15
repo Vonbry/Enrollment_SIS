@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Providers\AppServiceProvider;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\EnrollmentController;
 
 Route::get('/', function () {
     return view('welcome'); // Show welcome page instead of redirecting
@@ -19,6 +20,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('students', StudentController::class); // Adds CRUD routes for students
     Route::resource('subjects', SubjectController::class); // Adds CRUD routes for subjects
+    Route::resource('enrollments', EnrollmentController::class); // Adds CRUD routes for enrollments
 });
 
 

@@ -35,6 +35,7 @@
         </div>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <script href="{{ asset('js/custom.js') }}"></script>
         <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
         <script>
             $(document).ready(function() {
@@ -44,6 +45,11 @@
          <script>
             $(document).ready(function() {
                 $('#subjectsTable').DataTable();
+            });
+        </script>
+        <script>
+            $(document).ready(function() {
+                $('#enrollmentsTable').DataTable();
             });
         </script>
         
