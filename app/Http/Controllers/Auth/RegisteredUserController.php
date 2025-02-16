@@ -37,6 +37,9 @@ class RegisteredUserController extends Controller
             'address' => ['required', 'string', 'max:255'],
             'age' => ['required', 'integer', 'min:1'],
             'phone' => ['required', 'string', 'max:20'],
+            'gender' => 'required|string|max:10',
+            'year_level' => 'required|integer|min:1|max:6',
+            'course' => 'required|string|max:255',
         ]);
 
         $user = User::create([
@@ -47,6 +50,10 @@ class RegisteredUserController extends Controller
             'address' => $request->address,
             'age' => $request->age,
             'phone' => $request->phone,
+            'status' => 'not_added_as_student', 
+            'gender' => $request->gender,
+            'year_level' => $request->year_level,
+            'course' => $request->course,
         ]);
 
         event(new Registered($user));

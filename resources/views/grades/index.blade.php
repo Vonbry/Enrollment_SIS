@@ -24,6 +24,7 @@
                         <th>Units</th>
                         <th>Midterm</th>
                         <th>Final</th>
+                        <th>Semester</th>
                         <th>Average</th>
                         <th>Rating</th>
                         <th>Actions</th>
@@ -57,6 +58,7 @@
                                         {{ $grade->final ?? 'N/A' }}
                                     @endif
                                 </td>
+                                <td>{{ $grade->semester ?? 'N/A' }}</td>
                                 <td>{{ $grade->average ?? 'N/A' }}</td>
                                 <td>{{ $grade->us_grade ?? 'N/A' }}</td> 
                                 <td>

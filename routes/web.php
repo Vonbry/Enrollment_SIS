@@ -30,7 +30,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('grades', GradeController::class); // Adds CRUD routes for grades
 });
 
-
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('grades', GradeController::class)->except(['index', 'show']);
+});
 
 // Student Dashboard (Only accessible to Students)
 Route::middleware(['auth', 'role:student'])->group(function () {

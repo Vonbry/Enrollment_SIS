@@ -18,6 +18,8 @@ class Grade extends Model
         'average',
         'numeric_grade',
         'us_grade',
+        '1st_sem_total_grade',
+        '2nd_sem_total_grade',
     ];
     
     protected $attributes = [
@@ -36,6 +38,8 @@ class Grade extends Model
 
     public function subject()
     {
-        return $this->belongsTo(Subject::class);
+        return $this->belongsTo(Subject::class, 'subject_id');
     }
+
+
 }

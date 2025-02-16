@@ -64,6 +64,15 @@
                 $('#gradesTable').DataTable();
             });
         </script>
-        
+        <script>
+            $(document).ready(function() {
+                $('#usersTable').DataTable();
+            });
+        </script>
+        <script>
+            $(document).ready(function() {
+                $('#gradesDashboard').DataTable();
+            });
+        </script>
     </body>
 </html>

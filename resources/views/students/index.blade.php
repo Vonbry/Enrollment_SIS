@@ -19,12 +19,13 @@
                 <table id="studentsTable" class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>Student ID</th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Phone</th>
-                            <th>Address</th>
-                            <th>Age</th>
+                            <th>Course</th>
+                            <th>Year Level</th>
+                            <th>Semester</th>
+                            <th>School Year</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -34,9 +35,10 @@
                                 <td>{{ $student->id }}</td>
                                 <td>{{ $student->name }}</td>
                                 <td>{{ $student->email }}</td>
-                                <td>{{ $student->phone }}</td>
-                                <td>{{ $student->address }}</td>
-                                <td>{{ $student->age }}</td>
+                                <td>{{ $student->course }}</td>
+                                <td>{{ $student->year_level }}</td>
+                                <td>{{ $student->latest_semester }}</td>
+                                <td>{{ $student->latest_school_year }}</td>
                                 <td>
                                     <a href="{{ route('students.show', $student) }}" class="btn btn-info btn-sm">View</a>
                                     <a href="{{ route('students.edit', $student) }}" class="btn btn-warning btn-sm">Edit</a>

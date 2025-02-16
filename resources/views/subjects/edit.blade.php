@@ -26,7 +26,7 @@
                 </div>
                 <div class="button-group">
                     <x-primary-button type="submit">Add Enrollment</x-primary-button>
-                    <a href="{{ route('enrollments.index') }}" class="btn btn-secondary">Cancel</a>
+                    <a href="{{ route('subjects.index') }}" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
     </div>

@@ -41,13 +41,35 @@ class EnrollmentController extends Controller
             'student_id' => 'required|exists:students,id',
             'subject_id' => 'required|exists:subjects,id',
             'semester' => 'required|in:1st,2nd',
-            'school_year' => ['required', 'regex:/^\d{4}-\d{4}$/'], // Ensure format like 2022-2023
+            'school_year' => ['required', 'regex:/^\d{4}-\d{4}$/'],
         ]);
 
+        $student = Student::findOrFail($validated['student_id']);
+        $subject = Subject::findOrFail($validated['subject_id']);
+
+        // Prevent duplicate enrollment
+        $existingEnrollment = Enrollment::where('student_id', $student->id)
+            ->where('subject_id', $subject->id)
+            ->where('semester', $validated['semester'])
+            ->where('school_year', $validated['school_year'])
+            ->first();
+
+        if ($existingEnrollment) {
+            return redirect()->route('enrollments.index')->with('error', 'Student is already enrolled in this subject.');
+        }
+
+        // Create Enrollment
         Enrollment::create($validated);
+
+        // Verify the subject (Update its status)
+        if ($subject->status !== 'verified') {
+            $subject->update(['status' => 'verified']);
+        }
 
         return redirect()->route('enrollments.index')->with('success', 'Enrollment created successfully.');
     }
+
+
 
     /**
      * Display the specified resource.

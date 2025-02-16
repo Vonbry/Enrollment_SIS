@@ -17,25 +17,32 @@
         <div class="card mt-3">
             <div class="card-body">
                 <table id="subjectsTable" class="table table-bordered">
-                    <thead>
+                <thead>
+                    <tr>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Units</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($subjects as $subject)
                         <tr>
-                            <th>ID</th>
-                            <th>Subject Code</th>
-                            <th>Subject Name</th>
-                            <th>Units</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($subjects as $subject)
-                            <tr>
-                                <td>{{ $subject->id }}</td>
-                                <td>{{ $subject->code }}</td>
-                                <td>{{ $subject->name }}</td>
-                                <td>{{ $subject->units }}</td>
-                                <td>
-                                    <a href="{{ route('subjects.show', $subject) }}" class="btn btn-info btn-sm">View</a>
-                                    <a href="{{ route('subjects.edit', $subject) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <td>{{ $subject->code }}</td>
+                            <td>{{ $subject->name }}</td>
+                            <td>{{ $subject->units }}</td>
+                            <td>
+                                @if ($subject->status === 'verified')
+                                    <span class="badge bg-success">Verified</span>
+                                @else
+                                    <span class="badge bg-warning">Not Verified</span>
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('subjects.show', $subject) }}" class="btn btn-info btn-sm">View</a>
+                                <a href="{{ route('subjects.edit', $subject) }}" class="btn btn-warning btn-sm">Edit</a>
+                                @if ($subject->status !== 'verified')
                                     <form action="{{ route('subjects.destroy', $subject) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -43,10 +50,11 @@
                                             Delete
                                         </button>
                                     </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
                 </table>
             </div>
         </div>

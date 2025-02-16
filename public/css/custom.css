@@ -185,6 +185,89 @@ body {
     transition: background-color 0.3s;
 }
 
+/* User Table*/
+#usersTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#usersTable th {
+    background-color: #007bff;
+    color: #ffffff;
+    text-align: left;
+    padding: 12px;
+}
+
+#usersTable td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#usersTable td .btn {
+    display: inline-block;
+    margin-right: 3px;
+
+}
+
+#usersTable td form {
+    display: inline;
+}
+
+/* Alternate row colors */
+#usersTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Hover effect */
+#usersTable tbody tr:hover {
+    background-color: #d1ecf1;
+    transition: background-color 0.3s;
+}
+
+/* User Table*/
+#gradesDashboard {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#gradesDashboard th {
+    background-color: #007bff;
+    color: #ffffff;
+    text-align: left;
+    padding: 12px;
+}
+
+#gradesDashboard td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#gradesDashboard td .btn {
+    display: inline-block;
+    margin-right: 3px;
+
+}
+
+#gradesDashboard td form {
+    display: inline;
+}
+
+/* Alternate row colors */
+#gradesDashboard tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Hover effect */
+#gradesDashboard tbody tr:hover {
+    background-color: #d1ecf1;
+    transition: background-color 0.3s;
+}
 
 /* Button Styling */
 .btn {
@@ -229,6 +312,24 @@ body {
     margin: 40px auto;
     background: #ffffff;
     padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container2 {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container3 {
+    max-width: 1000px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

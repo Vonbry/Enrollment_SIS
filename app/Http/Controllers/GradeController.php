@@ -34,80 +34,97 @@ class GradeController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'student_id' => 'required|exists:students,id',
-        'subject_id' => 'required|exists:subjects,id',
-        'semester' => 'required|in:1st,2nd',
-        'midterm' => [
-            'nullable',
-            'numeric',
-            'min:0', // Allow 0 as a valid midterm grade
-            'max:5',
-            function ($attribute, $value, $fail) use ($request) {
-                if ($request->semester === '1st' && ($value === null || $value === '')) {
-                    $fail('The midterm grade is required for 1st semester.');
-                }
-            }
-        ],
-        'final' => [
-            'nullable',
-            'numeric',
-            'min:0', // Allow 0 as a valid final grade
-            'max:5',
-            function ($attribute, $value, $fail) use ($request) {
-                if ($request->semester === '2nd' && ($value === null || $value === '')) {
-                    $fail('The final grade is required for 2nd semester.');
-                }
-            }
-        ],
-    ]);
-
-    // Check if the grade record already exists for the student and subject
-    $grade = Grade::where([
-        'student_id' => $validated['student_id'],
-        'subject_id' => $validated['subject_id']
-    ])->first();
-
-    if (!$grade) {
-        // Create a new grade entry
+    {
+        $validated = $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'semester' => 'required|in:1st,2nd',
+            'midterm' => 'nullable|numeric|min:1.00|max:5.00',
+            'final' => 'nullable|numeric|min:1.00|max:5.00',
+        ]);
+    
+        // Check if student is enrolled in the selected semester
+        $isEnrolled = \DB::table('enrollments')
+            ->where('student_id', $validated['student_id'])
+            ->where('semester', $validated['semester'])
+            ->exists();
+    
+        if (!$isEnrolled) {
+            return back()->withErrors(['semester' => 'Student is not enrolled in this semester.']);
+        }
+    
+        // Check if the subject is verified
+        $isVerified = \DB::table('subjects')
+            ->where('id', $validated['subject_id'])
+            ->where('status', 'verified')
+            ->exists();
+    
+        if (!$isVerified) {
+            return back()->withErrors(['subject_id' => 'The selected subject is not verified.']);
+        }
+    
+        // Get all existing grades for the student
+        $existingGrades = Grade::where('student_id', $validated['student_id'])->get();
+    
+        // Calculate semester averages
+        $firstSemTotal = $existingGrades->where('semester', '1st')->pluck('average')->avg();
+        $secondSemTotal = $existingGrades->where('semester', '2nd')->pluck('average')->avg();
+    
+        // Create new grade entry
         $grade = new Grade();
         $grade->student_id = $validated['student_id'];
         $grade->subject_id = $validated['subject_id'];
-        $grade->midterm = ($request->midterm === 'INC' || $request->midterm === 'D' || $request->midterm === 'FDA') 
-            ? $request->midterm 
-            : (float) $request->midterm;
-
-        $grade->final = ($request->final === 'INC' || $request->final === 'D' || $request->final === 'FDA') 
-            ? $request->final 
-            : (float) $request->final;
-
-    } else {
-        // Update only the selected semester grade without resetting the other
-        if ($validated['semester'] === '1st') {
-            $grade->midterm = $validated['midterm'];
+        $grade->semester = $validated['semester'];
+        $grade->midterm = $request->midterm ?? 0;
+        $grade->final = $request->final ?? 0;
+    
+        // Calculate average if both midterm and final exist
+        if (!is_null($grade->midterm) && !is_null($grade->final)) {
+            $average = ($grade->midterm + $grade->final) / 2;
+            [$numeric_grade, $us_grade] = $this->getGradeDescription($average);
+            $grade->average = $average;
+            $grade->numeric_grade = $numeric_grade;
+            $grade->us_grade = $us_grade;
         } else {
-            $grade->final = $validated['final'];
+            $grade->average = null;
+            $grade->numeric_grade = null;
+            $grade->us_grade = null;
         }
-    }
-
-    $grade->save();
-
-    // If both midterm and final are present, calculate the average and grade
-    if ($grade->midterm !== null && $grade->final !== null) {
-        $average = ($grade->midterm + $grade->final) / 2;
-        [$numeric_grade, $us_grade] = $this->getGradeDescription($average);
     
-        $grade->update([
-            'average' => $average,
-            'numeric_grade' => $numeric_grade,
-            'us_grade' => $us_grade // Ensure this field is updated
-        ]);
+        // Assign semester total grades correctly
+        if ($validated['semester'] === '1st') {
+            $grade->{'1st_sem_total_grade'} = $firstSemTotal ?? $grade->average;
+            $grade->{'2nd_sem_total_grade'} = $secondSemTotal ?? null;
+        } else {
+            $grade->{'1st_sem_total_grade'} = $firstSemTotal ?? null;
+            $grade->{'2nd_sem_total_grade'} = $secondSemTotal ?? $grade->average;
+        }
+    
+        $grade->save();
+    
+        // Update the semester totals for all grades for this student without overriding the other semester
+        if ($validated['semester'] === '1st') {
+            Grade::where('student_id', $validated['student_id'])
+                ->update(['1st_sem_total_grade' => $this->calculateSemesterTotal($validated['student_id'], '1st')]);
+        } else {
+            Grade::where('student_id', $validated['student_id'])
+                ->update(['2nd_sem_total_grade' => $this->calculateSemesterTotal($validated['student_id'], '2nd')]);
+        }
+    
+        return redirect()->route('grades.index')->with('success', 'Grade recorded successfully.');
     }
     
-
-    return redirect()->route('grades.index')->with('success', 'Grade recorded successfully.');
-}
+    private function calculateSemesterTotal($student_id, $semester)
+    {
+        $grades = Grade::where('student_id', $student_id)
+            ->where('semester', $semester)
+            ->whereNotNull('average')
+            ->pluck('average');
+    
+        return $grades->count() > 0 ? $grades->sum() / $grades->count() : null;
+    }
+    
+    
 
 
     /**
@@ -188,6 +205,34 @@ class GradeController extends Controller
             return [4.00, "Conditional"];
         } else {
             return [5.00, "Failed"];
+        }
+    }
+    
+    private function updateSemesterTotal($student_id, $semester)
+    {
+        $grades = Grade::where('student_id', $student_id)
+            ->where('semester', $semester)
+            ->whereNotNull('average')
+            ->pluck('average');
+    
+        if ($grades->count() > 0) {
+            $semester_average = $grades->sum() / $grades->count();
+        } else {
+            $semester_average = null; // No grades available
+        }
+    
+        if ($semester === '1st') {
+            Grade::where('student_id', $student_id)
+                ->update([
+                    '1st_sem_total_grade' => $semester_average,
+                    '2nd_sem_total_grade' => null  // Ensure 2nd semester is null
+                ]);
+        } else {
+            Grade::where('student_id', $student_id)
+                ->update([
+                    '2nd_sem_total_grade' => $semester_average,
+                    '1st_sem_total_grade' => null  // Ensure 1st semester is null
+                ]);
         }
     }
     

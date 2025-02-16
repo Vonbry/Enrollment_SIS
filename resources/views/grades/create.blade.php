@@ -32,10 +32,11 @@
         <div class="mb-3">
             <label class="form-label">Semester</label>
             <select name="semester" class="form-control1" required id="semester">
-                <option value="">Select Semester</option>
-                <option value="1st">1st Semester</option>
-                <option value="2nd">2nd Semester</option>
-            </select>
+            <option value="">Select Semester</option>
+            <option value="1st" {{ old('semester') == '1st' ? 'selected' : '' }}>1st Semester</option>
+            <option value="2nd" {{ old('semester') == '2nd' ? 'selected' : '' }}>2nd Semester</option>
+        </select>
+
             @error('semester') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
 

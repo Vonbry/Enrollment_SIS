@@ -47,6 +47,43 @@
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
 
+         <!-- Gender Dropdown -->
+         <div class="mt-4">
+            <x-input-label for="gender" :value="__('Gender')" />
+            <select id="gender" name="gender" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                <option value="Male" selected>Male</option>
+                <option value="Female">Female</option>
+            </select>
+            <x-input-error :messages="$errors->get('gender')" class="mt-2" />
+        </div>
+
+        <!-- Year Level Dropdown -->
+        <div class="mt-4">
+            <x-input-label for="year_level" :value="__('Year Level')" />
+            <select id="year_level" name="year_level" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm" required>
+                <option value="" disabled selected>Select Year Level</option>
+                @for ($i = 1; $i <= 6; $i++)
+                    <option value="{{ $i }}">{{ $i }} Year</option>
+                @endfor
+            </select>
+            <x-input-error :messages="$errors->get('year_level')" class="mt-2" />
+        </div>
+
+        <!-- Course Dropdown -->
+        <div class="mt-4">
+            <x-input-label for="course" :value="__('Course')" />
+            <select id="course" name="course" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm" required>
+                <option value="" disabled selected>Select Course</option>
+                <option value="BSIT">BSIT</option>
+                <option value="BSCS">BSCS</option>
+                <option value="BSCE">BSCE</option>
+                <option value="BSEd">BSEd</option>
+                <option value="BSBA">BSBA</option>
+            </select>
+            <x-input-error :messages="$errors->get('course')" class="mt-2" />
+        </div>
+
+
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />

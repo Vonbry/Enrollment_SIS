@@ -76,8 +76,12 @@ class SubjectController extends Controller
      */
     public function destroy(Subject $subject)
     {
+        if ($subject->status === 'verified') {
+            return redirect()->route('subjects.index')->with('error', 'Cannot delete a verified subject.');
+        }
+    
         $subject->delete();
-
         return redirect()->route('subjects.index')->with('success', 'Subject deleted successfully.');
     }
+    
 }
