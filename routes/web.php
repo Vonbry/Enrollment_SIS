@@ -11,12 +11,10 @@ use App\Http\Controllers\StudentDashboardController;
 
 
 Route::get('/', function () {
-    return view('welcome'); // Show welcome page instead of redirecting
+    return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard'); 
-})->name('dashboard');
+
 
 // Admin Dashboard (Only accessible to Admins)
 Route::middleware(['auth', 'role:admin'])->group(function () {
