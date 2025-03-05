@@ -1,38 +1,57 @@
 @extends('layouts.app')
 @section('content')
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                <h3>Welcome, Admin!</h3>
-                <p>This is your dashboard where you can manage students, subjects, enrollments, and grades.</p>
+<div class="admin-dashboard">
+    <div class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p class="welcome-text">Welcome back, {{ Auth::user()->name }}!</p>
+    </div>
 
-                <!-- Button to go to Student Management -->
-                <a href="{{ route('students.index') }}">
-                    <x-primary-button class="mt-4">
-                        Manage Students
-                    </x-primary-button>
-                </a>
-                <!-- Button to go to Subject Management -->
-                <a href="{{ route('subjects.index') }}">
-                    <x-primary-button class="mt-4">
-                        Manage Subjects
-                    </x-primary-button>
-                </a>
-
-                <!-- Button to go to Enrollment Management -->
-                <a href="{{ route('enrollments.index') }}">
-                    <x-primary-button class="mt-4">
-                        Manage Enrollments
-                    </x-primary-button>
-                </a>
-
-                <!-- Button to go to Grade Management -->
-                <a href="{{ route('grades.index') }}">
-                    <x-primary-button class="mt-4">
-                        Manage Grades
-                    </x-primary-button>
-                </a>
-            </div>
+    <div class="stats-container">
+        <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <h3>Total Students</h3>
+            <p>{{ $totalStudents }}</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-book"></i>
+            <h3>Total Subjects</h3>
+            <p>{{ $totalSubjects }}</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-user-graduate"></i>
+            <h3>Active Enrollments</h3>
+            <p>{{ $totalEnrollments }}</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-chart-bar"></i>
+            <h3>Total Grades</h3>
+            <p>{{ $totalGrades }}</p>
         </div>
     </div>
+
+    <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="quick-actions-grid">
+            <a href="{{ route('students.index') }}" class="action-card students-card">
+                <i class="fas fa-users"></i>
+                <span>Manage Students</span>
+            </a>
+            <a href="{{ route('subjects.index') }}" class="action-card subjects-card">
+                <i class="fas fa-book"></i>
+                <span>Manage Subjects</span>
+            </a>
+            <a href="{{ route('enrollments.index') }}" class="action-card enrollments-card">
+                <i class="fas fa-user-graduate"></i>
+                <span>Manage Enrollments</span>
+            </a>
+            <a href="{{ route('grades.index') }}" class="action-card grades-card">
+                <i class="fas fa-chart-bar"></i>
+                <span>Manage Grades</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Add Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 @endsection

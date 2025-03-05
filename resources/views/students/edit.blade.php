@@ -1,59 +1,94 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container1">
-        <h1 class="h1">Edit Student</h1>
-        <form action="{{ route('students.update', $student) }}" method="POST">
-            @csrf
-            @method('PATCH')
-
-            <!-- Student ID -->
-            <div class="mb-3">
-                <label>Student ID</label>
-                <input type="text" name="id" class="form-control1" value="{{ $student->id }}" readonly>
+    <div class="container">
+        <div class="edit-form-container">
+            <div class="form-header">
+                <h2>Edit Student</h2>
+                <a href="{{ route('students.index') }}" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
             </div>
 
-            <!-- Name -->
-            <div class="mb-3">
-                <label>Name</label>
-                <input type="text" name="name" class="form-control1" value="{{ $student->name }}" required>
-            </div>
+            <form method="POST" action="{{ route('students.update', $student->id) }}" class="edit-form">
+                @csrf
+                @method('PUT')
 
-            <!-- Email (Read-Only) -->
-            <div class="mb-3">
-                <label>Email</label>
-                <input type="email" name="email" class="form-control1" value="{{ $student->email }}" readonly>
-            </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" value="{{ old('name', $student->name) }}" 
+                            class="form-control @error('name') is-invalid @enderror" required>
+                        @error('name')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-            <!-- Year Level Dropdown -->
-            <div class="mb-3">
-                <label>Year Level</label>
-                <select name="year_level" class="form-control1" required>
-                    <option value="" disabled>Select Year Level</option>
-                    @for ($i = 1; $i <= 6; $i++)
-                        <option value="{{ $i }}" {{ $student->year_level == $i ? 'selected' : '' }}>{{ $i }} Year</option>
-                    @endfor
-                </select>
-            </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="{{ old('email', $student->email) }}" 
+                            class="form-control @error('email') is-invalid @enderror" required>
+                        @error('email')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-            <!-- Course Dropdown -->
-            <div class="mb-3">
-                <label>Course</label>
-                <select name="course" class="form-control1" required>
-                    <option value="" disabled>Select Course</option>
-                    <option value="BSIT" {{ $student->course == 'BSIT' ? 'selected' : '' }}>BSIT</option>
-                    <option value="BSCS" {{ $student->course == 'BSCS' ? 'selected' : '' }}>BSCS</option>
-                    <option value="BSCE" {{ $student->course == 'BSCE' ? 'selected' : '' }}>BSCE</option>
-                    <option value="BSEd" {{ $student->course == 'BSEd' ? 'selected' : '' }}>BSEd</option>
-                    <option value="BSBA" {{ $student->course == 'BSBA' ? 'selected' : '' }}>BSBA</option>
-                </select>
-            </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="text" id="phone" name="phone" value="{{ old('phone', $student->phone) }}" 
+                            class="form-control @error('phone') is-invalid @enderror" required>
+                        @error('phone')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-            <!-- Submit & Cancel Buttons -->
-            <div class="button-group">
-                <x-primary-button type="submit">Add Enrollment</x-primary-button>
-                <a href="{{ route('students.index') }}" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" name="address" value="{{ old('address', $student->address) }}" 
+                            class="form-control @error('address') is-invalid @enderror" required>
+                        @error('address')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" name="age" value="{{ old('age', $student->age) }}" 
+                            class="form-control @error('age') is-invalid @enderror" required>
+                        @error('age')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="year_level">Year Level</label>
+                        <select id="year_level" name="year_level" class="form-control @error('year_level') is-invalid @enderror" required>
+                            @for ($i = 1; $i <= 4; $i++)
+                                <option value="{{ $i }}" {{ old('year_level', $student->year_level) == $i ? 'selected' : '' }}>
+                                    {{ $i }}
+                                </option>
+                            @endfor
+                        </select>
+                        @error('year_level')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="course">Course</label>
+                        <input type="text" id="course" value="{{ $student->course }}" class="form-control" readonly disabled>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Student
+                    </button>
+                    <a href="{{ route('students.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 @endsection

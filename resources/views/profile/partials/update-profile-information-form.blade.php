@@ -3,9 +3,8 @@
         <h2 class="text-lg font-medium text-gray-900">
             {{ __('Profile Information') }}
         </h2>
-
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
+            {{ __("Update your account's profile information.") }}
         </p>
     </header>
 
@@ -17,12 +16,14 @@
         @csrf
         @method('patch')
 
+        <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
+        <!-- Email -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
@@ -45,6 +46,49 @@
                     @endif
                 </div>
             @endif
+        </div>
+
+        <!-- Phone -->
+        <div>
+            <x-input-label for="phone" :value="__('Phone')" />
+            <x-text-input id="phone" name="phone" type="text" class="mt-1 block w-full" :value="old('phone', $user->phone)" required />
+            <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+        </div>
+
+        <!-- Address -->
+        <div>
+            <x-input-label for="address" :value="__('Address')" />
+            <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" :value="old('address', $user->address)" required />
+            <x-input-error class="mt-2" :messages="$errors->get('address')" />
+        </div>
+
+        <!-- Age -->
+        <div>
+            <x-input-label for="age" :value="__('Age')" />
+            <x-text-input id="age" name="age" type="number" class="mt-1 block w-full" :value="old('age', $user->age)" required />
+            <x-input-error class="mt-2" :messages="$errors->get('age')" />
+        </div>
+
+        <!-- Year Level -->
+        <div>
+            <x-input-label for="year_level" :value="__('Year Level')" />
+            <select id="year_level" name="year_level" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                @for ($i = 1; $i <= 6; $i++)
+                    <option value="{{ $i }}" {{ old('year_level', $user->year_level) == $i ? 'selected' : '' }}>Year {{ $i }}</option>
+                @endfor
+            </select>
+            <x-input-error class="mt-2" :messages="$errors->get('year_level')" />
+        </div>
+
+        <!-- Course -->
+        <div>
+            <x-input-label for="course" :value="__('Course')" />
+            <select id="course" name="course" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                @foreach(['IT', 'NURSING', 'EDUC', 'BUSINESS AD', 'ACCOUNTING'] as $course)
+                    <option value="{{ $course }}" {{ old('course', $user->course) == $course ? 'selected' : '' }}>{{ $course }}</option>
+                @endforeach
+            </select>
+            <x-input-error class="mt-2" :messages="$errors->get('course')" />
         </div>
 
         <div class="flex items-center gap-4">

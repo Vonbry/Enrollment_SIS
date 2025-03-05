@@ -7,6 +7,7 @@ use App\Models\Grade;
 use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class GradeController extends Controller
 {
@@ -15,7 +16,7 @@ class GradeController extends Controller
      */
     public function index()
     {
-        $grades = Grade::with('student', 'subject')->get();
+        $grades = Grade::with(['student', 'subject'])->get();
         return view('grades.index', compact('grades'));
     }
 
@@ -26,7 +27,6 @@ class GradeController extends Controller
     {
         $students = Student::all();
         $subjects = Subject::all();
-
         return view('grades.create', compact('students', 'subjects'));
     }
 
@@ -38,80 +38,43 @@ class GradeController extends Controller
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'subject_id' => 'required|exists:subjects,id',
+            'midterm' => 'required|numeric|min:1.00|max:5.00',
+            'final' => 'required|numeric|min:1.00|max:5.00',
             'semester' => 'required|in:1st,2nd',
-            'midterm' => 'nullable|numeric|min:1.00|max:5.00',
-            'final' => 'nullable|numeric|min:1.00|max:5.00',
         ]);
-    
-        // Check if student is enrolled in the selected semester
-        $isEnrolled = \DB::table('enrollments')
-            ->where('student_id', $validated['student_id'])
-            ->where('semester', $validated['semester'])
-            ->exists();
-    
-        if (!$isEnrolled) {
-            return back()->withErrors(['semester' => 'Student is not enrolled in this semester.']);
-        }
-    
-        // Check if the subject is verified
-        $isVerified = \DB::table('subjects')
-            ->where('id', $validated['subject_id'])
-            ->where('status', 'verified')
-            ->exists();
-    
-        if (!$isVerified) {
-            return back()->withErrors(['subject_id' => 'The selected subject is not verified.']);
-        }
-    
-        // Get all existing grades for the student
-        $existingGrades = Grade::where('student_id', $validated['student_id'])->get();
-    
-        // Calculate semester averages
-        $firstSemTotal = $existingGrades->where('semester', '1st')->pluck('average')->avg();
-        $secondSemTotal = $existingGrades->where('semester', '2nd')->pluck('average')->avg();
-    
-        // Create new grade entry
-        $grade = new Grade();
-        $grade->student_id = $validated['student_id'];
-        $grade->subject_id = $validated['subject_id'];
-        $grade->semester = $validated['semester'];
-        $grade->midterm = $request->midterm ?? 0;
-        $grade->final = $request->final ?? 0;
-    
-        // Calculate average if both midterm and final exist
-        if (!is_null($grade->midterm) && !is_null($grade->final)) {
-            $average = ($grade->midterm + $grade->final) / 2;
-            [$numeric_grade, $us_grade] = $this->getGradeDescription($average);
-            $grade->average = $average;
-            $grade->numeric_grade = $numeric_grade;
-            $grade->us_grade = $us_grade;
-        } else {
-            $grade->average = null;
-            $grade->numeric_grade = null;
-            $grade->us_grade = null;
-        }
-    
-        // Assign semester total grades correctly
-        if ($validated['semester'] === '1st') {
-            $grade->{'1st_sem_total_grade'} = $firstSemTotal ?? $grade->average;
-            $grade->{'2nd_sem_total_grade'} = $secondSemTotal ?? null;
-        } else {
-            $grade->{'1st_sem_total_grade'} = $firstSemTotal ?? null;
-            $grade->{'2nd_sem_total_grade'} = $secondSemTotal ?? $grade->average;
-        }
-    
-        $grade->save();
-    
-        // Update the semester totals for all grades for this student without overriding the other semester
-        if ($validated['semester'] === '1st') {
-            Grade::where('student_id', $validated['student_id'])
-                ->update(['1st_sem_total_grade' => $this->calculateSemesterTotal($validated['student_id'], '1st')]);
-        } else {
-            Grade::where('student_id', $validated['student_id'])
-                ->update(['2nd_sem_total_grade' => $this->calculateSemesterTotal($validated['student_id'], '2nd')]);
-        }
-    
-        return redirect()->route('grades.index')->with('success', 'Grade recorded successfully.');
+
+        // Calculate average for this semester
+        $average = ($validated['midterm'] + $validated['final']) / 2;
+        
+        // Check if other semester exists
+        $otherSemester = $validated['semester'] === '1st' ? '2nd' : '1st';
+        $existingGrade = Grade::where('student_id', $validated['student_id'])
+            ->where('subject_id', $validated['subject_id'])
+            ->where('semester', $otherSemester)
+            ->first();
+
+        // Default to In Progress if we don't have both semester grades
+        $remarks = 'In Progress';
+        
+        Grade::create([
+            'student_id' => $validated['student_id'],
+            'subject_id' => $validated['subject_id'],
+            'midterm' => $validated['midterm'],
+            'final' => $validated['final'],
+            'average' => $average,
+            'numeric_grade' => $average,
+            'semester' => $validated['semester'],
+            'description' => 'Regular Grade',
+            'us_grade' => $remarks
+        ]);
+
+        return redirect()->route('grades.index')
+            ->with('success', 'Grade recorded successfully.');
+    }
+
+    private function calculateGradeRemarks($average)
+    {
+        return $average <= 3.00 ? 'Passed' : 'Failed';
     }
     
     private function calculateSemesterTotal($student_id, $semester)
@@ -130,9 +93,9 @@ class GradeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Grade $grade)
     {
-        //
+        return view('grades.show', compact('grade'));
     }
 
     /**
@@ -150,35 +113,43 @@ class GradeController extends Controller
      */
     public function update(Request $request, Grade $grade)
     {
-        $validated = $request->validate([
-            'midterm_grade' => 'nullable|numeric|min:0|max:100',
-            'final_grade' => 'nullable|numeric|min:0|max:100',
+        $validator = \Validator::make($request->all(), [
+            'midterm' => 'required|numeric|min:1|max:5',
+            'final' => 'required|numeric|min:1|max:5',
+            'description' => 'required|string',
         ]);
-    
-        $average = ($request->midterm_grade + $request->final_grade) / 2;
-        [$numeric_grade,$us_grade] = $this->getGradeDescription($average);
 
-        $grade->midterm = ($request->midterm_grade === 'INC' || $request->midterm_grade === 'D' || $request->midterm_grade === 'FDA') 
-        ? $request->midterm_grade 
-        : (float) $request->midterm_grade;
-        
-        $grade->final = ($request->final_grade === 'INC' || $request->final_grade === 'D' || $request->final_grade === 'FDA') 
-            ? $request->final_grade 
-            : (float) $request->final_grade;
-        
-        $grade->save();
-    
-        return redirect()->route('grades.index')->with('success', 'Grade updated successfully!');
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            $grade->midterm = $request->midterm;
+            $grade->final = $request->final;
+            $grade->description = $request->description;
+            $grade->average = ($request->midterm + $request->final) / 2;
+            $grade->us_grade = $this->calculateGradeRemarks($grade->average);
+            $grade->save();
+
+            return redirect()->route('grades.index')
+                ->with('success', 'Grade updated successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Failed to update grade.')
+                ->withInput();
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-
     public function destroy(Grade $grade)
     {
         $grade->delete();
-        return redirect()->route('grades.index')->with('success', 'Grade deleted successfully!');
+        return redirect()->route('grades.index')
+            ->with('success', 'Grade deleted successfully');
     }
 
     private function getGradeDescription($numeric_grade)

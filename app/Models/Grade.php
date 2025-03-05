@@ -12,20 +12,20 @@ class Grade extends Model
     protected $fillable = [
         'student_id',
         'subject_id',
-        'semester',
         'midterm',
         'final',
         'average',
         'numeric_grade',
+        'description',
         'us_grade',
-        '1st_sem_total_grade',
-        '2nd_sem_total_grade',
+        'semester'
     ];
     
     protected $attributes = [
         'average' => null,
         'numeric_grade' => null,
         'us_grade' => null,
+        'description' => 'Regular Grade'
     ];
     
     
@@ -38,7 +38,7 @@ class Grade extends Model
 
     public function subject()
     {
-        return $this->belongsTo(Subject::class, 'subject_id');
+        return $this->belongsTo(Subject::class);
     }
 
 

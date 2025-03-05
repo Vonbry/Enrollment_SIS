@@ -77,11 +77,22 @@ class SubjectController extends Controller
     public function destroy(Subject $subject)
     {
         if ($subject->status === 'verified') {
-            return redirect()->route('subjects.index')->with('error', 'Cannot delete a verified subject.');
+            return back()->with('error', 'Cannot delete a verified subject.');
         }
-    
+
+        // Check if subject has any enrollments
+        if ($subject->enrollments()->exists()) {
+            return back()->with('error', 'Cannot delete subject because it has active enrollments.');
+        }
+
+        // Check if subject has any grades
+        if ($subject->grades()->exists()) {
+            return back()->with('error', 'Cannot delete subject because it has existing grades.');
+        }
+
         $subject->delete();
-        return redirect()->route('subjects.index')->with('success', 'Subject deleted successfully.');
+        return redirect()->route('subjects.index')
+            ->with('success', 'Subject deleted successfully');
     }
     
 }

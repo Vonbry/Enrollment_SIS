@@ -74,11 +74,11 @@
             <x-input-label for="course" :value="__('Course')" />
             <select id="course" name="course" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm" required>
                 <option value="" disabled selected>Select Course</option>
-                <option value="BSIT">BSIT</option>
-                <option value="BSCS">BSCS</option>
-                <option value="BSCE">BSCE</option>
-                <option value="BSEd">BSEd</option>
-                <option value="BSBA">BSBA</option>
+                <option value="IT">IT</option>
+                <option value="NURSING">NURSING</option>
+                <option value="EDUC">EDUC</option>
+                <option value="BUSINESS AD">BUSINESS AD</option>
+                <option value="ACCOUNTING">ACCOUNTING</option>
             </select>
             <x-input-error :messages="$errors->get('course')" class="mt-2" />
         </div>

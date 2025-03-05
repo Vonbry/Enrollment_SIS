@@ -8,6 +8,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\StudentDashboardController;
+use App\Http\Controllers\AdminDashboardController;
 
 
 Route::get('/', function () {
@@ -18,14 +19,15 @@ Route::get('/', function () {
 
 // Admin Dashboard (Only accessible to Admins)
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin-dashboard', function () {
-        return view('admin.index');
-    })->name('admin-dashboard');
+    Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])->name('admin-dashboard');
 
     Route::resource('students', StudentController::class); // Adds CRUD routes for students
     Route::resource('subjects', SubjectController::class); // Adds CRUD routes for subjects
     Route::resource('enrollments', EnrollmentController::class); // Adds CRUD routes for enrollments
     Route::resource('grades', GradeController::class); // Adds CRUD routes for grades
+    Route::post('/students/approve/{user}', [StudentController::class, 'approve'])->name('students.approve');
+    Route::delete('/students/decline/{user}', [StudentController::class, 'decline'])->name('students.decline');
+    Route::get('/students/{student}/view', [StudentController::class, 'show'])->name('students.show');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

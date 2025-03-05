@@ -12,20 +12,34 @@ class StudentDashboardController extends Controller
 {
     public function index()
     {
-        // Get the authenticated user
-        $user = Auth::user();
+        if (Auth::user()->status === 'not_added_as_student') {
+            return view('students.pending');
+        }
 
-        // Find the corresponding student record
-        $student = Student::where('email', $user->email)->first();
-
-        // Ensure the student exists before fetching grades
+        // Get the authenticated student's record
+        $student = Student::where('email', Auth::user()->email)->first();
+        
         if (!$student) {
             return redirect()->back()->with('error', 'Student record not found.');
         }
 
-        // Fetch only the grades of the logged-in student
-        $grades = Grade::where('student_id', $student->id)->with('subject')->get();
+        $grades = Grade::with('subject')
+            ->where('student_id', $student->id)
+            ->get();
 
-        return view('students.dashboard', compact('grades'));
+        // Calculate GWA
+        $totalUnits = 0;
+        $totalWeightedGrades = 0;
+
+        foreach ($grades as $grade) {
+            if ($grade->average) {
+                $totalUnits += $grade->subject->units;
+                $totalWeightedGrades += ($grade->average * $grade->subject->units);
+            }
+        }
+
+        $gwa = $totalUnits > 0 ? number_format($totalWeightedGrades / $totalUnits, 2) : 0;
+
+        return view('students.dashboard', compact('grades', 'student', 'gwa'));
     }
 }

@@ -47,7 +47,7 @@ class EnrollmentController extends Controller
         $student = Student::findOrFail($validated['student_id']);
         $subject = Subject::findOrFail($validated['subject_id']);
 
-        // Prevent duplicate enrollment
+        // Check for existing enrollment
         $existingEnrollment = Enrollment::where('student_id', $student->id)
             ->where('subject_id', $subject->id)
             ->where('semester', $validated['semester'])
@@ -55,18 +55,37 @@ class EnrollmentController extends Controller
             ->first();
 
         if ($existingEnrollment) {
-            return redirect()->route('enrollments.index')->with('error', 'Student is already enrolled in this subject.');
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Student is already enrolled in this subject for the selected semester.'
+            ]);
+        }
+
+        // Check for existing grades
+        $existingGrade = \App\Models\Grade::where('student_id', $student->id)
+            ->where('subject_id', $subject->id)
+            ->where('semester', $validated['semester'])
+            ->first();
+
+        if ($existingGrade) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Cannot enroll student. Student already has grades for this subject in the selected semester.'
+            ]);
         }
 
         // Create Enrollment
         Enrollment::create($validated);
 
-        // Verify the subject (Update its status)
+        // Verify the subject
         if ($subject->status !== 'verified') {
             $subject->update(['status' => 'verified']);
         }
 
-        return redirect()->route('enrollments.index')->with('success', 'Enrollment created successfully.');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Enrollment created successfully.'
+        ]);
     }
 
 
@@ -112,6 +131,7 @@ class EnrollmentController extends Controller
     public function destroy(Enrollment $enrollment)
     {
         $enrollment->delete();
-        return redirect()->route('enrollments.index')->with('success', 'Enrollment deleted successfully.');
+        return redirect()->route('enrollments.index')
+            ->with('success', 'Enrollment deleted successfully');
     }
 }

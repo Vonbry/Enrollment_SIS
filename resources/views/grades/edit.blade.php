@@ -20,52 +20,24 @@
 
         <div class="mb-3">
             <label class="form-label">Midterm Grade</label>
-            <select name="midterm_grade" class="form-control1">
-                <option value="">Select Grade</option>
-                <option value="1.00" {{ $grade->midterm == '1.00' ? 'selected' : '' }}>1.00 (A+)</option>
-                <option value="1.25" {{ $grade->midterm == '1.25' ? 'selected' : '' }}>1.25 (A)</option>
-                <option value="1.50" {{ $grade->midterm == '1.50' ? 'selected' : '' }}>1.50 (A-)</option>
-                <option value="1.75" {{ $grade->midterm == '1.75' ? 'selected' : '' }}>1.75 (B+)</option>
-                <option value="2.00" {{ $grade->midterm == '2.00' ? 'selected' : '' }}>2.00 (B)</option>
-                <option value="2.25" {{ $grade->midterm == '2.25' ? 'selected' : '' }}>2.25 (B-)</option>
-                <option value="2.50" {{ $grade->midterm == '2.50' ? 'selected' : '' }}>2.50 (C+)</option>
-                <option value="2.75" {{ $grade->midterm == '2.75' ? 'selected' : '' }}>2.75 (C)</option>
-                <option value="3.00" {{ $grade->midterm == '3.00' ? 'selected' : '' }}>3.00 (C-)</option>
-                <option value="4.00" {{ $grade->midterm == '4.00' ? 'selected' : '' }}>4.00 (D - Conditional)</option>
-                <option value="5.00" {{ $grade->midterm == '5.00' ? 'selected' : '' }}>5.00 (F - Failed)</option>
-                <option value="INC" {{ $grade->midterm == 'INC' ? 'selected' : '' }}>INC (Incomplete)</option>
-                <option value="D" {{ $grade->midterm == 'D' ? 'selected' : '' }}>D (Drop)</option>
-                <option value="FDA" {{ $grade->midterm == 'FDA' ? 'selected' : '' }}>FDA (Failure Due to Absence)</option>
-            </select>
-            @error('midterm_grade') <span class="text-danger">{{ $message }}</span> @enderror
+            <input type="number" name="midterm" class="form-control1" step="0.01" min="1.00" max="5.00" value="{{ $grade->midterm }}" required>
+            @error('midterm') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
 
         <div class="mb-3">
             <label class="form-label">Final Grade</label>
-            <select name="final_grade" class="form-control1">
-                <option value="">Select Grade</option>
-                <option value="1.00" {{ $grade->final == '1.00' ? 'selected' : '' }}>1.00 (A+)</option>
-                <option value="1.25" {{ $grade->final == '1.25' ? 'selected' : '' }}>1.25 (A)</option>
-                <option value="1.50" {{ $grade->final == '1.50' ? 'selected' : '' }}>1.50 (A-)</option>
-                <option value="1.75" {{ $grade->final == '1.75' ? 'selected' : '' }}>1.75 (B+)</option>
-                <option value="2.00" {{ $grade->final == '2.00' ? 'selected' : '' }}>2.00 (B)</option>
-                <option value="2.25" {{ $grade->final == '2.25' ? 'selected' : '' }}>2.25 (B-)</option>
-                <option value="2.50" {{ $grade->final == '2.50' ? 'selected' : '' }}>2.50 (C+)</option>
-                <option value="2.75" {{ $grade->final == '2.75' ? 'selected' : '' }}>2.75 (C)</option>
-                <option value="3.00" {{ $grade->final == '3.00' ? 'selected' : '' }}>3.00 (C-)</option>
-                <option value="4.00" {{ $grade->final == '4.00' ? 'selected' : '' }}>4.00 (D - Conditional)</option>
-                <option value="5.00" {{ $grade->final == '5.00' ? 'selected' : '' }}>5.00 (F - Failed)</option>
-                <option value="INC" {{ $grade->final == 'INC' ? 'selected' : '' }}>INC (Incomplete)</option>
-                <option value="D" {{ $grade->final == 'D' ? 'selected' : '' }}>D (Drop)</option>
-                <option value="FDA" {{ $grade->final == 'FDA' ? 'selected' : '' }}>FDA (Failure Due to Absence)</option>
-            </select>
-            @error('final_grade') <span class="text-danger">{{ $message }}</span> @enderror
+            <input type="number" name="final" class="form-control1" step="0.01" min="1.00" max="5.00" value="{{ $grade->final }}" required>
+            @error('final') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
 
-        <div class="button-group">
-            <x-primary-button type="submit">Add Enrollment</x-primary-button>
-            <a href="{{ route('grades.index') }}" class="btn btn-secondary">Cancel</a>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control1" required>{{ $grade->description }}</textarea>
+            @error('description') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
+
+        <button type="submit" class="btn btn-primary">Update Grade</button>
+        <a href="{{ route('grades.index') }}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 @endsection

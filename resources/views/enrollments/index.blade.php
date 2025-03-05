@@ -1,56 +1,52 @@
 @extends('layouts.app')
 @section('content')
-    <div class="container mt-4">
-        <h2>Enrollments List</h2>
-        
-        <!-- Add Student Button (Using Blade Component) -->
-        <a href="{{ route('enrollments.create') }}">
-            <x-primary-button>Add Enrollment</x-primary-button>
-        </a>
+    <div class="container">
+        <div class="management-section">
+            <div class="management-header">
+                <h2 class="management-title">Enrollment Management</h2>
+                <a href="{{ route('enrollments.create') }}" class="btn-add">
+                    <i class="fas fa-plus"></i> Add Enrollment
+                </a>
+            </div>
 
-        <!-- Success Message -->
-        @if (session('success'))
-            <div class="alert alert-success mt-3">{{ session('success') }}</div>
-        @endif
+            <input type="text" class="search-box" placeholder="Search enrollments...">
 
-        <!-- Student Table with DataTables -->
-        <div class="card mt-3">
-            <div class="card-body">
-                <table id="enrollmentsTable" class="table table-bordered">
-                    <thead>
+            <table class="management-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Subject</th>
+                        <th>Semester</th>
+                        <th>School Year</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($enrollments as $enrollment)
                         <tr>
-                            <th>ID</th>
-                            <th>Subject Code</th>
-                            <th>Subject Name</th>
-                            <th>Units</th>
-                            <th>School Year</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($enrollments as $enrollment)
-                            <tr>
-                            <td>{{ $enrollment->id }}</td>
                             <td>{{ $enrollment->student->name }}</td>
                             <td>{{ $enrollment->subject->name }}</td>
                             <td>{{ $enrollment->semester }}</td>
                             <td>{{ $enrollment->school_year }}</td>
-                                <td>
-                                    <a href="{{ route('enrollments.show', $enrollment) }}" class="btn btn-info btn-sm">View</a>
-                                    <a href="{{ route('enrollments.edit', $enrollment) }}" class="btn btn-warning btn-sm">Edit</a>
-                                    <form action="{{ route('enrollments.destroy', $enrollment) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                            <td class="action-buttons">
+                                <a href="{{ route('enrollments.show', $enrollment) }}" class="btn btn-view">
+                                    View
+                                </a>
+                                <a href="{{ route('enrollments.edit', $enrollment) }}" class="btn btn-edit">
+                                    Edit
+                                </a>
+                                <form id="delete-form-{{ $enrollment->id }}" action="{{ route('enrollments.destroy', $enrollment) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn btn-delete" onclick="confirmDelete('delete-form-{{ $enrollment->id }}')">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 @endsection

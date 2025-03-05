@@ -25,7 +25,7 @@
                     @error('units') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
                 <div class="button-group">
-                    <x-primary-button type="submit">Add Enrollment</x-primary-button>
+                    <x-primary-button type="submit">Save Changes</x-primary-button>
                     <a href="{{ route('subjects.index') }}" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>

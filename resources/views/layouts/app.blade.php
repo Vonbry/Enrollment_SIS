@@ -11,9 +11,14 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
    
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="{{ asset('js/dashboard.js') }}"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
@@ -74,5 +79,16 @@
                 $('#gradesDashboard').DataTable();
             });
         </script>
+        @if(session('success'))
+            <script>
+                showFlashMessage("{{ session('success') }}", 'success');
+            </script>
+        @endif
+
+        @if(session('error'))
+            <script>
+                showFlashMessage("{{ session('error') }}", 'error');
+            </script>
+        @endif
     </body>
 </html>
