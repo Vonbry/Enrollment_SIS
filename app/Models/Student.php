@@ -18,7 +18,12 @@ class Student extends Model
         'age',
         'status',
         'year_level',
-        'course'
+        'course',
+        'gender',
+        'first_sem',
+        'second_sem',
+        'first_sem_school_year',
+        'second_sem_school_year'
     ];
 
     protected $guarded = ['course'];

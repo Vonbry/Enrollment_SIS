@@ -27,9 +27,30 @@ class EnrollmentController extends Controller
     public function create()
     {
         $students = Student::all();
+        // Initially load all subjects, they will be filtered via JavaScript
         $subjects = Subject::all();
-
+        
         return view('enrollments.create', compact('students', 'subjects'));
+    }
+
+    // Add this new method to get filtered subjects
+    public function getSubjectsByCourse($course)
+    {
+        $coursePrefix = match ($course) {
+            'IT' => 'IT',
+            'NURSING' => 'NUR',
+            'EDUC' => 'EDUC',
+            'BUSINESS AD' => 'BA',
+            'ACCOUNTANCY' => 'ACC',
+            default => '',
+        };
+
+        // Get course-specific subjects and general education subjects
+        $subjects = Subject::where('code', 'like', $coursePrefix . '%')
+                          ->orWhere('code', 'like', 'GE%')
+                          ->get();
+
+        return response()->json($subjects);
     }
 
     /**

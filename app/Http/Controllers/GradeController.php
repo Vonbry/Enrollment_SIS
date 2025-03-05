@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Enrollment;
 
 class GradeController extends Controller
 {
@@ -24,53 +25,61 @@ class GradeController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        $students = Student::all();
-        $subjects = Subject::all();
-        return view('grades.create', compact('students', 'subjects'));
-    }
+{
+    $students = Student::all();
+    $enrolledSubjects = Enrollment::with(['subject', 'student'])->get();
+    
+    return view('grades.create', compact('students', 'enrolledSubjects'));
+}
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'subject_id' => 'required|exists:subjects,id',
-            'midterm' => 'required|numeric|min:1.00|max:5.00',
-            'final' => 'required|numeric|min:1.00|max:5.00',
-            'semester' => 'required|in:1st,2nd',
+{
+    $validated = $request->validate([
+        'student_id' => 'required|exists:students,id',
+        'subject_id' => 'required|exists:subjects,id',
+        'midterm' => 'required|numeric|between:1.00,5.00',
+        'final' => 'required|numeric|between:1.00,5.00',
+        'semester' => 'required|in:1st,2nd'
+    ]);
+
+    // Check if student is enrolled in this subject
+    $enrollment = Enrollment::where('student_id', $validated['student_id'])
+        ->where('subject_id', $validated['subject_id'])
+        ->first();
+
+    if (!$enrollment) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Student is not enrolled in this subject.'
         ]);
-
-        // Calculate average for this semester
-        $average = ($validated['midterm'] + $validated['final']) / 2;
-        
-        // Check if other semester exists
-        $otherSemester = $validated['semester'] === '1st' ? '2nd' : '1st';
-        $existingGrade = Grade::where('student_id', $validated['student_id'])
-            ->where('subject_id', $validated['subject_id'])
-            ->where('semester', $otherSemester)
-            ->first();
-
-        // Default to In Progress if we don't have both semester grades
-        $remarks = 'In Progress';
-        
-        Grade::create([
-            'student_id' => $validated['student_id'],
-            'subject_id' => $validated['subject_id'],
-            'midterm' => $validated['midterm'],
-            'final' => $validated['final'],
-            'average' => $average,
-            'numeric_grade' => $average,
-            'semester' => $validated['semester'],
-            'description' => 'Regular Grade',
-            'us_grade' => $remarks
-        ]);
-
-        return redirect()->route('grades.index')
-            ->with('success', 'Grade recorded successfully.');
     }
+
+    // Calculate average
+    $average = ($validated['midterm'] + $validated['final']) / 2;
+    
+    // Create grade data
+    $gradeData = [
+        'student_id' => $validated['student_id'],
+        'subject_id' => $validated['subject_id'],
+        'midterm' => $validated['midterm'],
+        'final' => $validated['final'],
+        'semester' => $validated['semester'],
+        'average' => number_format($average, 2),
+        'numeric_grade' => number_format($average, 2),
+        'us_grade' => $average <= 3.0 ? 'Passed' : 'Failed',
+        'description' => 'Regular Grade'
+    ];
+
+    Grade::create($gradeData);
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Grade added successfully.'
+    ]);
+}
 
     private function calculateGradeRemarks($average)
     {
@@ -87,8 +96,20 @@ class GradeController extends Controller
         return $grades->count() > 0 ? $grades->sum() / $grades->count() : null;
     }
     
-    
-
+    private function normalizeGrade($grade)
+    {
+        if ($grade <= 1.00) return 1.00;
+        if ($grade <= 1.25) return 1.25;
+        if ($grade <= 1.50) return 1.50;
+        if ($grade <= 1.75) return 1.75;
+        if ($grade <= 2.00) return 2.00;
+        if ($grade <= 2.25) return 2.25;
+        if ($grade <= 2.50) return 2.50;
+        if ($grade <= 2.75) return 2.75;
+        if ($grade <= 3.00) return 3.00;
+        if ($grade <= 4.00) return 4.00;
+        return 5.00;
+    }
 
     /**
      * Display the specified resource.
@@ -120,25 +141,25 @@ class GradeController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput();
+            return back()->withErrors($validator)->withInput();
         }
 
         try {
+            $average = ($request->midterm + $request->final) / 2;
+            $normalizedAverage = $this->normalizeGrade($average);
+
             $grade->midterm = $request->midterm;
             $grade->final = $request->final;
             $grade->description = $request->description;
-            $grade->average = ($request->midterm + $request->final) / 2;
-            $grade->us_grade = $this->calculateGradeRemarks($grade->average);
+            $grade->average = $normalizedAverage;
+            $grade->numeric_grade = $normalizedAverage;
+            $grade->us_grade = $this->calculateGradeRemarks($normalizedAverage);
             $grade->save();
 
             return redirect()->route('grades.index')
                 ->with('success', 'Grade updated successfully.');
         } catch (\Exception $e) {
-            return back()
-                ->with('error', 'Failed to update grade.')
-                ->withInput();
+            return back()->with('error', 'Failed to update grade.')->withInput();
         }
     }
 
@@ -206,6 +227,23 @@ class GradeController extends Controller
                 ]);
         }
     }
-    
 
+    // Add this new method to get enrolled subjects
+    public function getEnrolledSubjects($studentId)
+    {
+        try {
+            $enrolledSubjects = Enrollment::where('student_id', $studentId)
+                ->join('subjects', 'enrollments.subject_id', '=', 'subjects.id')
+                ->select('subjects.id', 'subjects.code', 'subjects.name', 'enrollments.semester')
+                ->get();
+    
+            \Log::info('Enrolled subjects:', ['student_id' => $studentId, 'subjects' => $enrolledSubjects->toArray()]);
+    
+            return response()->json($enrolledSubjects);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching enrolled subjects: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch subjects'], 500);
+        }
+    }
+    
 }

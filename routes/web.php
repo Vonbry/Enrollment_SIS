@@ -9,6 +9,7 @@ use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\ReportController;
 
 
 Route::get('/', function () {
@@ -28,6 +29,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/students/approve/{user}', [StudentController::class, 'approve'])->name('students.approve');
     Route::delete('/students/decline/{user}', [StudentController::class, 'decline'])->name('students.decline');
     Route::get('/students/{student}/view', [StudentController::class, 'show'])->name('students.show');
+    Route::get('/report/grades', [ReportController::class, 'grades'])->name('report.grades');
+    Route::get('/api/students/{student}/enrolled-subjects', [GradeController::class, 'getEnrolledSubjects']);
+   
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -44,5 +48,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/api/subjects-by-course/{course}', [EnrollmentController::class, 'getSubjectsByCourse'])
+     ->name('subjects.by.course');
+
+Route::get('/api/students/{student}/enrolled-subjects', [GradeController::class, 'getEnrolledSubjects'])
+     ->name('students.enrolled-subjects');
 
 require __DIR__.'/auth.php';

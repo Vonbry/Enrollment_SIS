@@ -15,10 +15,10 @@ class Grade extends Model
         'midterm',
         'final',
         'average',
-        'numeric_grade',
+        'semester',
         'description',
-        'us_grade',
-        'semester'
+        'numeric_grade',
+        'us_grade'
     ];
     
     protected $attributes = [

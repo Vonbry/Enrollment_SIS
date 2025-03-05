@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
+use App\Models\User;
 
 class StudentController extends Controller
 {
@@ -149,12 +150,28 @@ class StudentController extends Controller
         return redirect()->route('students.index')->with('success', 'Student deleted successfully.');
     }
 
-    public function approve(Request $request, $userId)
+    public function approve(User $user)
     {
-        $user = \App\Models\User::findOrFail($userId);
+        // Generate student ID (YYYY-COURSE-XXXXX)
+        $year = date('Y');
+        $course = str_replace(' ', '', $user->course);
         
-        // Create a new student record without student_id
+        $lastStudent = Student::where('student_id', 'like', $year . '-' . $course . '-%')
+            ->orderBy('student_id', 'desc')
+            ->first();
+
+        if ($lastStudent) {
+            $lastNumber = intval(substr($lastStudent->student_id, -5));
+            $newNumber = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
+        } else {
+            $newNumber = '00001';
+        }
+
+        $studentId = $year . '-' . $course . '-' . $newNumber;
+
+        // Create Student record
         Student::create([
+            'student_id' => $studentId,
             'name' => $user->name,
             'email' => $user->email,
             'phone' => $user->phone,
@@ -162,6 +179,7 @@ class StudentController extends Controller
             'age' => $user->age,
             'year_level' => $user->year_level,
             'course' => $user->course,
+            'gender' => $user->gender
         ]);
 
         // Update user status

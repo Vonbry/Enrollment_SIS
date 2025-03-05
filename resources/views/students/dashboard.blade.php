@@ -70,8 +70,17 @@
                             <td class="grade-cell">{{ number_format($subjectGrades->where('semester', '1st')->first()->average ?? 0, 2) }}</td>
                             <td class="grade-cell">{{ number_format($subjectGrades->where('semester', '2nd')->first()->average ?? 0, 2) }}</td>
                             <td>
-                                <span class="status-badge status-{{ strtolower($subjectGrades->first()->us_grade) }}">
-                                    {{ $subjectGrades->first()->us_grade }}
+                                @php
+                                    $firstSem = $subjectGrades->where('semester', '1st')->first();
+                                    $secondSem = $subjectGrades->where('semester', '2nd')->first();
+                                    $remarks = 'In Progress';
+                                    if ($firstSem && $secondSem) {
+                                        $finalAverage = ($firstSem->average + $secondSem->average) / 2;
+                                        $remarks = $finalAverage <= 3.00 ? 'Passed' : 'Failed';
+                                    }
+                                @endphp
+                                <span class="status-badge status-{{ strtolower($remarks) }}">
+                                    {{ $remarks }}
                                 </span>
                             </td>
                         </tr>

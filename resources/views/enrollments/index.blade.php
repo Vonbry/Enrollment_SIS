@@ -9,9 +9,7 @@
                 </a>
             </div>
 
-            <input type="text" class="search-box" placeholder="Search enrollments...">
-
-            <table class="management-table">
+            <table id="enrollmentsTable" class="display">
                 <thead>
                     <tr>
                         <th>Student</th>
@@ -28,20 +26,18 @@
                             <td>{{ $enrollment->subject->name }}</td>
                             <td>{{ $enrollment->semester }}</td>
                             <td>{{ $enrollment->school_year }}</td>
-                            <td class="action-buttons">
-                                <a href="{{ route('enrollments.show', $enrollment) }}" class="btn btn-view">
-                                    View
-                                </a>
-                                <a href="{{ route('enrollments.edit', $enrollment) }}" class="btn btn-edit">
-                                    Edit
-                                </a>
-                                <form id="delete-form-{{ $enrollment->id }}" action="{{ route('enrollments.destroy', $enrollment) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="btn btn-delete" onclick="confirmDelete('delete-form-{{ $enrollment->id }}')">
-                                        Delete
-                                    </button>
-                                </form>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ route('enrollments.show', $enrollment->id) }}" class="btn-view">View</a>
+                                    <a href="{{ route('enrollments.edit', $enrollment->id) }}" class="btn-edit">Edit</a>
+                                    <form action="{{ route('enrollments.destroy', $enrollment->id) }}" method="POST" class="inline-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this enrollment?')">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
@@ -49,4 +45,27 @@
             </table>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        $(document).ready(function() {
+            var table = $('#enrollmentsTable').DataTable({
+                destroy: true,
+                responsive: true,
+                pageLength: 10,
+                order: [[0, 'asc']],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search enrollments..."
+                },
+                columnDefs: [
+                    {
+                        targets: -1,
+                        orderable: false
+                    }
+                ]
+            });
+        });
+    </script>
+@endpush
 @endsection
